@@ -1,0 +1,13 @@
+
+$ cd "Your full filepath" -- go to folder where you store the code
+$ git init -- initialise the folder (put under version control, make sure not already done)
+$ git add . -- add everything you want to save
+$ git commit -m "first commit" -- save your work
+$ git config --global user.email louis.thackray@dhsc.gov.uk -- set your email
+$ git config --global user.name Elle-York -- set your user name (same as Github)
+$ git config --list (check the username and email are correct)
+$ git status -- check what's happened
+$ git remote add origin https://github.com/Elle-York/ons_data_science.git -- connect to Github
+$ git branch -m main --connect to repo branch
+$ git push -u origin main -- push your work to the repo branch
+$ git status -- final check everything is ok
