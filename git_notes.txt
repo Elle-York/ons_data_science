@@ -1,0 +1,71 @@
+## Set up -----------------------------------------------
+$ pwd -- print working directory
+$ cd "C:\Users\LThackray\OneDrive - Department of Health and Social Care\6. Data_Science\ONS_Prog\My_Code" -- set up wd
+$ git init  -- initiate the folder we are in (only do if not previously done)
+$ git status -- check initiated
+$ git add test_file.txt -- add specific file for staging
+$ git add . -- adds everything in it 
+$ git status -- check staged
+$ git commit -m "This is my first go at Gitbash!" -- commit file
+$ git status -- check committed
+$ git log -- check overall commit info
+$ git branch - check branch is master  
+
+## Create a new file ------------------------------------
+-- Set up
+$ touch test_file.txt -- create a file and then go to file and add any content, and save work
+$ git status -- check recognised new work done
+
+
+## Create, Merge and Delete Branches --------------------------------
+-- Set up
+$ git checkout -b dev -- create and switch to new branch called 'dev'
+$ git checkout master (or name of target branch) -- move back to target
+$ touch test_file.txt -- create a file on new branch
+$ git add . -- add any non-staged files
+$ git commit -m "Another bold, breezy brave attempt!"
+$ git checkout master -- move back to master
+$ git merge dev master -- merges work (deletes branched file, don't panic)
+$ git status -- check everything is right
+$ git branch -d dev -- will only work if branch has been merged
+
+## Resolve Merge Conflicts ---------------------------------
+-- if a conflict occurs, go into the file and take out the following 3 items
+<<<<<<<< HEAD
+==========
+>>>>>>>> name of branch
+$ git add . -- add the changes 
+$ commit -m "message" -- commit the changes
+$ git branch -d alt_dev -- get rid of old branch (alt_dev was the name of the branch)
+
+## External Repo ------------------------------------------
+-- Navigate to Github 
+-- create a repo on Github, DO NOT initialise with readme until after local push
+$ cd file path here - make sure you're in the file path you want to be in
+$ git status -- make sure you've initiated your folder and are up to date with commits
+$ git remote add origin <put remote repo url here but not the arrows at either end >
+$ git remote -v -- this verifies the connection 
+$ git push -u origin main
+-- you will then get a pop-up and choose code option, new window pops up, add code 
+-- you should now be authorised and your local and remote repo have said hello to each other. 
+
+## Updating Repos --------------------------------------
+
+$ cd "copy drive" -- set to correct folder
+$ git status -- check correct folder
+$ git add . -- add any unstaged files
+$ git commit -m "message" -- commit the files
+$ git status -- check everything
+$ git remote -v -- verify external repo is right
+$ git push origin main -- push up to external repo
+$ ls -- list all files
+$ git status -- check everythings worked
+
+## Rename a file ---------------------------------------
+$ mv oldfilename newfilename
+
+## Change the repo -------------------------------------
+
+$ git remote set-url origin new url -- needs old url (origin) and new url (new repo url)
+
+https://stackoverflow.com/questions/22844806/how-to-change-my-git-username-in-terminal -- how to change user name for different repos per folder
