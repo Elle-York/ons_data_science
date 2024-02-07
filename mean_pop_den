@@ -1,0 +1,129 @@
+######### File to analyse the mean population density data from the UN #########
+
+# Alt + shift + k = shortcuts for R
+# control + shift + F10 = clean environment to ensure reproducibility
+
+# Import relevant libraries for analysis ---------------------------------------
+library(tidyr)
+library(dplyr)
+library(stringr)
+library(readr)
+
+# Load the population density data 2019 ----------------------------------------
+
+pop_density <- read_csv("population_density_2019.csv")
+glimpse(pop_density)
+
+# Clean the column names, following snake_case convention
+
+colnames(pop_density) <- tolower(colnames(pop_density))
+colnames(pop_density) <- stringr::str_replace_all(colnames(
+  pop_density),
+  pattern = " ", 
+  replacement = "_")
+
+glimpse(pop_density)
+
+
+# Split country_and_parent_code column into two cols ---------------------------
+
+pop_density <- separate(data = pop_density, 
+                        col = country_and_parent_code,
+                        into = c("country_code", "parent_code"),
+                        sep = "_")
+
+glimpse(pop_density)
+
+
+# Remove the  parent_code column, not used in later analysis -------------------
+
+pop_density <- select(pop_density, everything(), -parent_code)
+
+glimpse(pop_density)
+
+# Convert country_code to integer by removing strings---------------------------
+
+pop_density$country_code <- str_remove_all(
+  pop_density$country_code, 
+  pattern = "CC")
+
+glimpse(pop_density)
+
+pop_density$country_code <- as.integer(
+  pop_density$country_code)
+
+glimpse(pop_density)
+
+
+# Load locations data to get Sustainable Development Goals sub regions----------
+
+locations <- read_csv("locations.csv")
+
+glimpse(locations)
+
+# Clean the column names -------------------------------------------------------
+
+colnames(locations) <- tolower(colnames(locations))
+
+colnames(locations) <- stringr::str_replace_all(
+  colnames(locations), 
+  pattern = " ", 
+  replacement = "_")
+
+glimpse(locations)
+
+# Convert location_id from string to numeric -----------------------------------
+
+locations$location_id <- str_remove_all(
+  locations$location_id, 
+  pattern = '"')
+
+glimpse(locations)
+
+locations$location_id <- as.integer(
+  locations$location_id)
+
+
+# Change location_id to country_code--------------------------------------------
+
+colnames(locations)[colnames(locations) == "location_id"] <- "country_code"
+
+
+# Left merge - keep all pop_density data ---------------------------------------
+
+pop_density_location <- dplyr::left_join(pop_density,
+                                         locations,
+                                         by = "country_code")
+
+
+# Select relevant cols for groupby ---------------------------------------------
+
+region_density <- select(
+  pop_density_location, 
+  sdg_region_name, 
+  population_density)
+
+# Calculate the mean population density for each region ------------------------
+
+# A non-weighted mean
+
+region_density_grouped <- group_by(region_density, sdg_region_name)
+
+region_mean_density <- summarise(
+  region_density_grouped, "mean_population_density" = mean(population_density))
+
+# Sort the data for clearer reading, descending order
+
+region_mean_density <- arrange(region_mean_density,  -mean_population_density)
+
+
+# Round mean density for clearer reading ---------------------------------------
+
+region_mean_density$mean_population_density <- round(
+  region_mean_density$mean_population_density, 
+  digits = 2)
+
+# Write out the final output ---------------------------------------------------
+
+write_csv(x = region_mean_density, 
+          file = "mean_population_density_output.csv")
