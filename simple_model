@@ -1,0 +1,72 @@
+
+######################### Workshop 11th January 2024 ###########################
+
+# load packages ----------------------------------------------------------------
+
+library(readr)
+library(tidyverse)
+library(janitor)
+library(moments)
+library(visdat)
+library(psych)
+
+# read in data -----------------------------------------------------------------
+
+# either load inbuilt data set or load csv...
+
+data("airquality")
+
+airquality_data <- read_csv("airquality_data.csv")
+
+# view data --------------------------------------------------------------------
+
+glimpse(airquality_data)
+
+summary(airquality_data)
+
+vis_dat(airquality_data)
+
+map_int(airquality_data, function(x) sum(is.na(x)))
+
+airquality %>%
+  keep(is.numeric) %>% 
+  gather() %>% 
+  ggplot(aes(value)) +
+  facet_wrap(~ key, scales = "free") +
+  geom_histogram()
+
+# Plot correlation matrix
+pairs(airquality)
+
+# Equivalent but using the plot function
+plot(airquality) 
+
+# plot the correlations
+
+corPlot(airquality) # plots correlation values
+
+cor(airquality_data$ozone, airquality_data$solar_r) # 0.3029695
+cor(airquality_data$ozone, airquality_data$temp) # 0.608742
+cor(airquality_data$ozone, airquality_data$wind) # -0.5309358
+
+# plot the most promising correlation
+
+airquality_data |>
+  ggplot(mapping = aes(x = wind, y = ozone)) +
+  geom_point(size = 4) +
+  geom_smooth(method = "lm")
+
+airquality_data |>
+  ggplot(mapping = aes(x = wind, y = ozone)) +
+  geom_point(size = 4) +
+  geom_abline(slope = -5.550923, intercept = 96.872895, col = "blue", linewidth = 2)
+
+# model ------------------------------------------------------------------------
+
+simple_model <-  lm(formula = Ozone ~ Wind, data = airquality)
+
+str(simple_model)
+
+simple_model$coefficients
+simple_model$residuals # how far is my model from the actual value
+summary(simple_model)
