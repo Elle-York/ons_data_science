@@ -1,0 +1,170 @@
+################################# INTRO TO R ###################################
+
+"I am learning R"
+
+#' If i want to comment out a large section of code which contains a lot of 
+#' instructions then I can use the hash and apostrophe and then break it with 
+#' just 
+#' a simple hash...
+# and that means it wont repeat again on the next line...
+
+# Numbers ----------------------------------------------------------------------
+
+2 + 4
+23 - 6; 36 + 5
+sqrt(25)
+round(3.6357, digits = 2)
+typeof(10)
+
+# Text -------------------------------------------------------------------------
+
+"Hello World"
+
+# Logical / Boolean Value
+
+TRUE + TRUE
+FALSE + FALSE
+TRUE * 2.5
+4 > 5
+25 == 5^2
+1 != 2
+
+# Data Type Conversion ---------------------------------------------------------
+
+as.integer(4.996453) # 4
+as.numeric("2") # 2
+as.logical(0) # FALSE
+
+# Variable Assignment ----------------------------------------------------------
+
+weight_kg <- 60 # assigns value, doesn't print
+weight_kg # prints
+(weight_kg <- 60) # assigns value and prints
+cat("my weight is", sep = '\n', weight_kg) # n creates new line
+weight_1b <- weight_kg * 2.2
+weight_1b
+rm(weight_1b) # remove variable
+
+# Getting help -----------------------------------------------------------------
+
+# Click on help tab, look for cheat sheets
+# Cross government slack page
+# teams page in DHSC
+# ?function
+# help?
+?mean
+help(mean)
+
+# Exercise
+
+typeof("10") # character
+typeof(10) # double
+typeof(10L) # integer
+typeof(TRUE) # logical
+
+time_value <- 30
+distance <- 10
+time_value <- 30 * 2
+distance <-  distance + 5
+speed <- distance / time_value
+speed
+rm(speed)
+
+############################## Intro to R ######################################
+
+# Chapter Two - Data Structures
+
+install.packages("tidyverse")
+library(tidyverse)
+
+# Creating Vectors -------------------------------------------------------------
+
+my_friends <- "ian"
+
+?c()
+help(c)
+
+my_friends <- c('ian','hannah','mike','almas') # 4 elements in the vector
+my_friends
+
+# Vector = collection of values that are all the same type
+# Create a vector with three main methods - combine, sequence, consecutive
+
+
+combine_vector <- c(1,2,3,4,5) # 5 elements in the vector
+sequence_1 <- seq(from = 2, to = 6, by = 2) # from, to, and by
+sequence_2 <- seq(from = 0, to = 100, by = 2)
+consecutive_vector <- 6:10
+
+
+# Combining Vectors ------------------------------------------------------------
+
+sample_vector
+consecutive_vector
+vector_addition <- sample_vector + consecutive_vector
+vector_multiplication <- sample_vector * consecutive_vector 
+sample_vector * 3
+vector_after_addition <- sample_vector + sequence_vector
+
+# each vector must be the same length in order to combine
+
+
+# Indexing a Vector ------------------------------------------------------------
+
+favourite_colours[2] # bring back second element
+favourite_colours[1:3] # bring back first three elements
+favourite_colours[c(1,3,4)] # bring back any choice
+
+
+# Exercise ---------------------------------------------------------------------
+
+favourite_colours <- c('light_blue', 'light_green','pink', 'purple')
+lucky_numbers <- c(9, 18, 27, 36)
+colours_numbers <- c(favourite_colours, lucky_numbers)
+typeof(colours_numbers)
+
+
+days_of_wk <- c('Monday', 
+                'Tuesday', 
+                'Wednesday', 
+                'Thursday', 
+                'Friday', 
+                'Saturday', 
+                'Sunday')
+
+days_of_wk[3] # bring back 3rd value
+days_of_wk[1:5] # bring back values 1 to 5
+days_of_wk[c(2, 4)] # bring back 2nd and 4th values
+days_of_wk[3] <- "Wensday" # change the name of one value
+wk_days <- days_of_wk[c(-6,-7)] # new variable minus the last two values
+days_of_wk[8] # not a value
+
+# Lists ------------------------------------------------------------------------
+
+# Ordered collection of elements
+# You can mix any type of element in a list
+# You can gather a number of objects in one organised way
+
+favourite_things <- list(favourite_colours, lucky_numbers)
+favourite_things[[1]]# first collection in list is the colours
+
+# Data Frames ------------------------------------------------------------------
+
+# Columns are variables
+# Rows are observations
+
+colours_numbers <- data.frame(favourite_colours, lucky_numbers)
+colours_numbers # prints out table
+str(colours_numbers) # prints out structure
+
+colours_numbers <- tibble(favourite_colours, lucky_numbers)
+
+
+
+
+
+
+
+
+
+
