@@ -1,0 +1,103 @@
+########### File to analyse the mean population density data from the UN #######
+
+# Load packages ----------------------------------------------------------------
+
+library(tidyr)
+library(dplyr)
+library(stringr)
+library(readr)
+
+# Load data --------------------------------------------------------------------
+
+# Data 1: Population Density for 2019
+pop_density <- read_csv("data/population_density_2019.csv")
+
+# Data 2: Sustainable Development Goals sub regions
+locations <- read_csv("data/locations.csv")
+
+
+# Data 1: Pop Density ----------------------------------------------------------
+
+# lower case
+colnames(pop_density) <- tolower(colnames(pop_density))
+
+# string replace
+colnames(pop_density) <- str_replace_all(
+  colnames(pop_density), 
+  pattern = " ", 
+  replacement = "_")
+
+# country_and_parent_code column split into two columns without strings
+pop_density <- separate(
+  data = pop_density, 
+  col = country_and_parent_code,
+  into = c("country_code", "parent_code"), 
+  sep = "_")
+
+# Remove parent_code column, not needed
+pop_density <- select(pop_density, everything(), -parent_code)
+
+# Remove strings in country code column
+pop_density$country_code <- str_remove_all(pop_density$country_code, 
+                                           pattern = "CC")
+
+# Convert country code col to integer
+pop_density$country_code <- as.integer(pop_density$country_code)
+
+
+# Data 2: Locations ------------------------------------------------------------
+
+colnames(locations) <- tolower(colnames(locations))
+colnames(locations) <- str_replace_all(colnames(locations), 
+                                       pattern = " ", 
+                                       replacement = "_")
+
+# Convert location ID from string to numeric
+locations$location_id <- str_remove_all(locations$location_id,
+                                        pattern = '"')
+
+locations$location_id <- as.integer(locations$location_id)
+
+
+# Change name of location id 
+colnames(locations)[colnames(locations) == "location_id"] <- "country_code"
+
+
+# Join Data 1 and Data 2--------------------------------------------------------
+
+# Left merge to keep all pop_density data
+
+pop_density_location <- left_join(pop_density,
+                                         locations,
+                                         by = "country_code")
+
+# Calculate statistics ---------------------------------------------------------
+
+# Select relevant cols for groupby
+region_density <- select(pop_density_location, 
+                         sdg_region_name, 
+                         population_density)
+
+# Calculate non-weighted mean population density for each region
+region_density_grouped <- group_by(region_density, sdg_region_name)
+
+region_mean_density <- summarise(region_density_grouped,
+                                        "mean_population_density" = mean(
+                                          population_density)
+                                        )
+
+# Sort descending
+region_mean_density <- arrange(region_mean_density,
+                               -mean_population_density)
+
+# Round mean density
+region_mean_density$mean_population_density <- round(
+  region_mean_density$mean_population_density, 
+  digits = 2)
+
+# Write out final output -------------------------------------------------------
+
+write_csv(x = region_mean_density, 
+          file = "mean_population_density_output.csv")
+
+
