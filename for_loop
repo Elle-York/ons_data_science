@@ -1,0 +1,72 @@
+######################## ONS Grad Course 7th Nov 23 ############################
+
+# For Loops --------------------------------------------------------------------
+
+
+example_iterable <- c(1,2,3,4,5)
+
+for(each_number in example_iterable){ # choose input
+  print(each_number) # choose action on each input
+}
+
+for(each_number in example_iterable){
+  print(2 * each_number)
+}
+
+example_output <- c()
+
+for (each_number in example_iterable) {
+  example_output <- c(example_output, 2 * each_number)
+}
+
+# While Loops ------------------------------------------------------------------
+
+counter <-  0
+while(counter < 6){ # keep doing this until this is reached
+  counter <- counter + 1 # do this on input
+  print(counter)
+}
+
+# IF Conditional ---------------------------------------------------------------
+
+# Example 1: Simple IF
+
+tw_height <- 190
+user_height <- 185
+
+if (user_height == tw_height){
+  print("we are the same height!")
+} else {
+  print("we are different heights")
+}
+
+# Example 2: Complex IF
+
+tw_height <- 185
+user_height <- 185
+
+if (user_height == tw_height){
+  print("we are the same height!")
+} else if (user_height < tw_height){
+  print("we are shorter than tw")
+} else if (user_height > tw_height){
+  print("we are taller than tw")
+}
+
+# Example 3: Interview Question ------------------------------------------------
+
+my_no <- c(1:20)
+
+for(number in my_no){ 
+  if(number %%3 == 0 & number %%5 == 0){
+    print("fizzbuzz")} 
+  else if(number %%3 == 0){
+    print("fizz")} 
+  else if (number %%5 == 0){
+    print ("buzz")} 
+  else {
+    print(number)}
+}
+
+    
+  
