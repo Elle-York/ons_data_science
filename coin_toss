@@ -1,0 +1,221 @@
+library(tidyverse)
+
+set.seed(20240109)
+
+# COIN TOSSES OF AN UNBIASED COIN
+coin <- c("head", "tail")
+
+# one coin toss
+sample(coin, size = 1)
+
+# simulate 10 coin tosses
+sample(coin, size = 10, replace = TRUE)
+
+coin <- 0:1
+sample(coin, size = 10, replace = TRUE) |> 
+  sum()
+
+# COIN TOSSES OF A BIASED
+probabilities <- c(0.4, 0.6)
+sample(coin, prob = probabilities, size = 1e5, replace = TRUE) |> 
+  sum()
+
+outcomes <- sample(coin, prob = probabilities, size = 1e5, replace = TRUE)
+
+
+tibble(outcomes) |> 
+  ggplot(mapping = aes(x = outcomes)) +
+  geom_bar()
+
+
+# DIE ROLLS
+die <- 1:6
+
+# one roll
+sample(die, size = 1)
+
+# ten rolls
+sample(die, size = 10, replace = TRUE)
+
+outcomes <- sample(die, size = 100, replace = TRUE)
+
+tibble(outcomes) |> 
+  ggplot(mapping = aes(x = outcomes)) +
+  geom_bar() +
+  scale_x_continuous(breaks = die)
+
+# 1 has twice the probability of the others
+probabilities <- c(2, 1, 1, 1, 1, 1) / 7
+
+outcomes <- sample(die, prob = probabilities, size = 100, replace = TRUE)
+
+tibble(outcomes) |> 
+  ggplot(mapping = aes(x = outcomes)) +
+  geom_bar() +
+  scale_x_continuous(breaks = die)
+
+# but R performs the "normalisation" autmatically
+outcomes <- sample(die, prob = c(2, 1, 1, 1, 1, 1), size = 100, replace = TRUE)
+
+tibble(outcomes) |> 
+  ggplot(mapping = aes(x = outcomes)) +
+  geom_bar() +
+  scale_x_continuous(breaks = die)
+
+table(outcomes)
+
+
+# SUM OF TWO FAIR DICE
+sum_two_dice <- 2:12
+probabilities <- c(1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1) / 36
+
+round(probabilities, digits = 3)
+
+# 1 sum of two dice
+sample(sum_two_dice, prob = probabilities, size = 1)
+
+# 50 sums of two dice
+sample(sum_two_dice, prob = probabilities, size = 50, replace = TRUE) |> 
+  table()
+
+2/36*50
+
+
+outcomes <- sample(sum_two_dice, prob = probabilities, size = 1e6, replace = TRUE)
+
+table(outcomes)
+
+tibble(outcomes) |> 
+  count(outcomes)
+
+tibble(outcomes) |> 
+  ggplot(mapping = aes(x = outcomes)) +
+  geom_bar() +
+  scale_x_continuous(breaks = sum_two_dice)
+
+# BINOMIAL DISTRIBUTION
+# Picking 8 random values from a sample which follows a binomial distribution, 
+# where the total number of observations in the sample is 150 
+# and the probability of success is 0.4.
+rbinom(n = 8, size = 150, prob = 0.4)
+
+# if we let n to be large" we can also plot meaningful graphs!
+sample <- rbinom(n = 1e4, size = 150, prob = 0.4)
+
+tibble(x = sample) |> 
+  ggplot(mapping = aes(x = x)) +
+  geom_histogram()
+
+
+# Probability of getting 26 heads from 51 tosses of a coin
+# where the probability of success (probability of getting a head) is 0.5
+dbinom(x = 26, size = 51, prob = 0.5)
+
+# this is the same as
+choose(51, 26) * 0.5^26 * (1 - 0.5)^(51 - 26)
+
+
+# Probability of getting up to 26 heads from 51 tosses of a coin.
+# where the probability of success is 0.5
+# Mathematically it is P(X⩽26) where X~Bin(51,0.5)
+pbinom(q = 26, size = 51, prob = 0.5)
+
+dbinom(x =  0, size = 51, prob = 0.5) +
+  dbinom(x =  1, size = 51, prob = 0.5) +
+  dbinom(x =  2, size = 51, prob = 0.5) +
+  dbinom(x =  3, size = 51, prob = 0.5) +
+  dbinom(x =  4, size = 51, prob = 0.5) +
+  dbinom(x =  5, size = 51, prob = 0.5) +
+  dbinom(x =  6, size = 51, prob = 0.5) +
+  dbinom(x =  7, size = 51, prob = 0.5) +
+  dbinom(x =  8, size = 51, prob = 0.5) +
+  dbinom(x =  9, size = 51, prob = 0.5) +
+  dbinom(x = 10, size = 51, prob = 0.5) +
+  dbinom(x = 11, size = 51, prob = 0.5) +
+  dbinom(x = 12, size = 51, prob = 0.5) +
+  dbinom(x = 13, size = 51, prob = 0.5) +
+  dbinom(x = 14, size = 51, prob = 0.5) +
+  dbinom(x = 15, size = 51, prob = 0.5) +
+  dbinom(x = 16, size = 51, prob = 0.5) +
+  dbinom(x = 17, size = 51, prob = 0.5) +
+  dbinom(x = 18, size = 51, prob = 0.5) +
+  dbinom(x = 19, size = 51, prob = 0.5) +
+  dbinom(x = 20, size = 51, prob = 0.5) +
+  dbinom(x = 21, size = 51, prob = 0.5) +
+  dbinom(x = 22, size = 51, prob = 0.5) +
+  dbinom(x = 23, size = 51, prob = 0.5) +
+  dbinom(x = 24, size = 51, prob = 0.5) +
+  dbinom(x = 25, size = 51, prob = 0.5) +
+  dbinom(x = 26, size = 51, prob = 0.5)
+
+# direct calculation
+# functional programming using purrr
+# map_dbl gives back a vector of numbers rather than a list
+# \(x) {bla bla bla} define an anonymous function that is 
+# iterated over the input vector
+0:26 |> 
+  map_dbl(\(x) choose(51, x) * 0.5^x * 0.5^(51 - x)) |>
+  sum()
+
+0:26 |> 
+  map_dbl(\(x) dbinom(x = x, size = 51, prob = 0.5)) |> 
+  sum()
+
+
+# What is the maximum number of heads 
+# in the bottom 25% of coin flip experiments when the coin is tossed 51 times?
+qbinom(p = 0.25, size = 51, prob = 0.5)
+
+# understand the above calculation
+0:22 |> map_dbl(\(x) choose(51, x) * 0.5^x * 0.5^(51 - x)) |> sum()
+0:23 |> map_dbl(\(x) choose(51, x) * 0.5^x * 0.5^(51 - x)) |> sum()
+
+# NORMAL DISTRIBUTION
+
+# Create a sample of 50 random numbers which are normally distributed.
+# using rnorm() function which generates random numbers from 
+# normal distributions 
+# n=50 because we want 50 random numbers 
+# standard normal distribution has mean=0 and standard deviation 1
+normal_sample <- rnorm(n = 50, mean = 0, sd = 1)
+
+# Plot the histogram for this sample.
+# x is the vector of values 
+# main gives the title, xlab and ylab gives the title for x-axis and y-axis
+tibble(x = normal_sample) |> 
+  ggplot(mapping = aes(x = x)) +
+  geom_histogram(binwidth = 1)
+
+# The default argument is to have lower.tail = TRUE,
+# which return the probabilities less than the height specified
+# that is P(X⩽157.5)
+pnorm(q = 157.5, mean = 170, sd = 10, lower.tail = TRUE)
+
+# can we visualise this?
+
+# first plot the normal distribution
+tibble(x = c(130, 210)) |> 
+  ggplot(mapping = aes(x = x)) +
+  stat_function(fun = dnorm, args = list(mean = 170, sd = 10)) +
+  geom_area(stat = "function", fun = dnorm, args = list(mean = 170, sd = 10), fill = "red", xlim = c(130, 157.5))
+
+
+
+# Assume that the test scores of a college entrance exam follow a normal
+# distribution. The sample mean test score is 72, and the sample standard 
+# deviation is 15.2. What is the percentage of students scoring 84 or more in 
+# the exam? [Hint: Calculate P(X≥84), where X~N(72,15.22)].
+
+# Since we are interested in cumulative probability we will use pnorm()
+# we specify the mean and standard deviation 
+# we are looking for the percentage of students scoring higher than 84
+# we are interested in the upper tail of the normal distribution
+
+pnorm(q = 84, mean = 72, sd = 15.2, lower.tail = FALSE) 
+
+# Alternative way is shown below since
+# X~N(72,15.2^2)
+# P(X≥84) = 1-P(X⩽84) =1 - P(X<84) for a continuous variable
+# the probability at each point is 0 so P(X=x)=0
+
+1 - pnorm(q = 84, mean = 72, sd = 15.2)
