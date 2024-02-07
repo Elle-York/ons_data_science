@@ -1,0 +1,212 @@
+############################## 9th January 2023 ################################
+
+# 1. Data ----------------------------------------------------------------------
+
+
+# Install Packages 
+
+#install.packages("janitor") # Clean and explore data
+#install.packages("visdat") # Visualise data
+#install.packages("naniar") # Missing data
+#install.packages("moments") # Skewness and kurtosis
+#install.packages("GGally") # Extension of ggplot2
+#install.packages("BSDA") # Basic stats and data analysis
+#install.packages("car") # Applied regression
+#install.packages("leaps") # Regression subset selection
+
+
+library(tidyverse)
+library(janitor)
+library(visdat)
+library(naniar)
+library(moments)
+library(GGally)
+library(BSDA)
+library(car)
+library(leaps)
+library(readr)
+
+# Import dataset 
+
+raw_energy_data <- read_csv("fake_energy_data.csv")
+str(raw_energy_data)
+glimpse(raw_energy_data)
+raw_energy_data
+head(raw_energy_data)
+
+# row id = 1,131 x 11 cols
+# consumption - gas consumption kWh
+# income - household income in £
+# floor_area - in square metres - binned
+# property_age - in 7 categories
+# tenure - form of tenancy
+# bedrooms - no of bedrooms in the property
+# property_type 
+# region
+# country - country where info is collected from
+# adults - number of adults in each household
+
+airquality_data <- read_csv("airquality_data.csv")
+glimpse(airquality_data)
+head(airquality_data, n = 10)
+tail(airquality_data, n = 10)
+
+# Ozone - Mean ozone concentrate parts per billion (1300 - 1500 hrs)Roosevelt Island
+# Solar.R - Solar radiation in Langleys (freq band 4000–7700) Angstroms (0800 to 1200 hrs) Central Park
+# Wind - Average wind speed mph at 0700 & 1000 hours - LaGuardia Airport
+# Temp - Maximum daily temp (deg F) - LaGuardia Airport
+# Month - Daily air quality measurements in New York (from (May to Sept 1973)
+# Day - Daily air quality measurements for all days from May to Sept
+# Days column can either have 30 or 31 days depending on corresponding month
+
+# Clean Data 
+
+airquality_data <- clean_names(airquality_data)
+names(airquality_data) <- tolower(names(airquality_data))
+names(airquality_data) <- gsub("_",".", names(airquality_data), fixed = TRUE) 
+# replace first character i.e. dot with another character i.e. _ or vice versa
+# if you just want to get rid of character, first = character, second is empty i.e. " "
+
+# 2. Random Sampling -----------------------------------------------------------
+
+set.seed(42) 
+# create a list of random reproducible numbers starting at no. 42
+# no.s are reproducible only if R version is the same
+sample(x = seq(1, 100), size = 10, replace = TRUE)
+# Select 10 numbers above 42 from 1 to 100
+# default is replace = False, in which no duplicates can occur
+
+set.seed(653)
+# create a list of random numbers starting at 653
+sample(x = seq(1, 500), size = 5, replace = FALSE)
+
+# Sample 10 row id numbers from a column in the raw energy dataset
+sample(x = raw_energy_data$rowid, size = 10, replace = FALSE)
+
+# 3. Probability Distributions -------------------------------------------------
+
+# Probability is the chance of an event occurring, defined between 0 and 1 
+# 0 = event will never happen, 1 = event will always happen. 
+# Random Variable - variable that takes values depending on outcomes of random events 
+# discrete = distinct, separate values (gender) or continuous (age, weight) 
+# The probability distribution for a random variable describes 
+# how probabilities are distributed over the values of the random variable. 
+
+# For a discrete random variable, x, the probability distribution is defined by 
+# a probability mass function, denoted by f(x)
+# For a continuous random variable, because there is an infinite number of values in any interval 
+# (e.g. you can always go to smaller and smaller decimals), we instead consider the probability 
+# that a continuous random variable will lie within a given interval. 
+# Here the probability distribution is defined by a probability density function, also denoted by f(x)
+# Both probability functions must satisfy two requirements:
+  # f(x) must be non-negative for each value of the random variable
+  # The sum of the probabilities for each value (or integral over all values) of the random variable must equal one
+
+help("distributions")
+
+# Binomial Distribution --------------------------------------------------------
+
+rbinom(n = 8, size = 150, prob = 0.4)
+# rbinom() generates required number of random values of given probability in a sample
+# Pick 8 random values from a sample that follows a binomial distribution
+# total number of observations is 150
+# probability of success = 0.4
+
+dbinom(x = 26, size = 51, prob = 0.5)
+# dbinom() gives the probability density distribution at each point
+# Probability of obtaining 26 heads from 51 tosses of a coin
+# Probability of success (obtaining a head) is 0.5
+
+pbinom(q = 26, size = 51, prob = 0.5)
+# cumulative probability of an event
+# probability of obtaining 26 heads from 51 tosses of a coin
+# probability of success = 0.5
+# expressed as P(X⩽26) where X~Bin(51,0.5)
+
+qbinom(p = 0.25, size = 51, prob = 0.5)
+# qbinom() function takes the probability value and gives a number whose cumulative
+# value matches the probability value
+# what is the max. no. of heads in the bottom 25% of coin flip experiments
+# when the coin is tossed 51 times
+
+# Worked Example 
+
+# There are twelve multiple choice questions in Russian test. 
+# Each question has five possible answers, and only one of them is correct (1/5 = 0.2)
+# Find the probability of having four or less correct answers 
+# if a student attempts to answer every question at RANDOM.
+dbinom(x = 4, size = 12, prob = 0.2) # prob of 4 answers correct at random = 0.13
+
+# However to find the probability of having four or less correct answers by random attempts,
+# we apply the function dbinom with x = 0,…,4.
+dbinom(0, size=12, prob=0.2) + # prob of 4 or less questions, answered correctly by random = 0.927
+  + dbinom(1, size=12, prob=0.2) + 
+  + dbinom(2, size=12, prob=0.2) + 
+  + dbinom(3, size=12, prob=0.2) + 
+  + dbinom(4, size=12, prob=0.2) 
+
+# Alternatively, we can use the cumulative probability function for binomial distribution pbinom
+pbinom(4, size=12, prob=0.2) 
+# prob of 4 or less questions, answered correctly by random = 0.927
+
+
+# Normal Distribution ----------------------------------------------------------
+
+# rnorm() generates random numbers
+# generate 50 random numbers
+# standard normal distribution has mean = 0 and SD = 1
+normal_sample <- rnorm(n = 50, mean = 0, sd = 1)
+
+# Plot the histogram of this random sample
+# main = title
+# xlab = x axis title
+# ylab = y axis title
+
+hist(x = normal_sample,
+     main = "Normal Distribution",
+     xlab = "Sample from normal distribution")
+
+# Given a normal distribution, find the probability of 
+# a man whose height is less than and equal to 157.5cm 
+# when the mean height of men in the sample is 170 cm & SD of men is 10cm 
+# lower.tail = TRUE (left wing of distribution given the numbers)
+# P(X⩽157.5), where  X∼N(170,10^2)
+
+pnorm(q = 157.5, mean = 170, sd = 10, lower.tail = TRUE)
+
+# Test scores of a college entrance exam follow a normal distribution
+# Sample mean test score = 72 and Sample sd = 15.2
+# What is the % of students scoring 84 or more in the exam
+# P(X≥84), where X~N(72,15.22)
+
+pnorm(q = 84, mean = 72, sd = 15.22, lower.tail = FALSE)
+
+# Poisson Distribution ---------------------------------------------------------
+
+# Distribution of no. of people, arrivals, events, counts etc
+# in a given time/space/unit of counting - mean and variance are the same
+# Choose 15 observations from poisson distribution, n = size of random numbers we want
+# average rate within window of observation is 10, lambda is the mean = 10
+
+rpois(n = 15,lambda = 10)
+
+# Probability of making 2 to 4 sales in a week, if average sales rate is 3 per week
+# Let X~Poisson(3)
+# Poisson distribution is discrete distribution, probability at each point does not have to be 0
+# So P(2≤X≤4) = P(X≤4)-P(X<2) = P(X≤4)-P(X≤1)
+# because P(X<2) = P(X=1)+P(X=0) = P(X≤1)
+# Since we are interested in cumulative probability we will use ppois()
+
+ppois(q = 4, lambda = 3, lower.tail = T) - ppois(q = 1, lambda = 3, lower.tail = T) 
+
+# alternative way
+
+dpois(x = 2, lambda = 3) + dpois(x = 3, lambda = 3) + dpois(x = 4, lambda = 3)
+
+# worked exercise --------------------------------------------------------------
+
+# 10 cars crossing a bridge per minute on average
+# find probability of having 12 or more cars crossing the bridge at any minute
+# P(X≥12), where X~poi(10) 
+
+ppois(q = 12, lambda = 10, lower.tail = F) # 0.21
